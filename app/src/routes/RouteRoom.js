@@ -11,9 +11,11 @@ export default class RouteRoom extends Route {
     // http://localhost:3000/rooms/
     @Route.Get({ path: '/rooms'})
     room_g(ctx) {
-        this.sendOk(ctx, {
+        this.sendOk(ctx, [{
+            id: 4,
+            name: 'test_room',
             msg: 'Get rooms'
-        });
+        }]);
     }
 
     // http://localhost:3000/rooms/:id/messages
@@ -28,6 +30,8 @@ export default class RouteRoom extends Route {
     @Route.Post({ path: '/rooms'})
     room_p(ctx) {
         this.sendOk(ctx, {
+            id: 3,
+            name: 'third_room',
             msg: 'Post rooms'
         });
     }
