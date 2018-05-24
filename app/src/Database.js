@@ -18,7 +18,16 @@ export default class Database {
             id: { type: Sequelize.INTEGER, primaryKey: true},
             pseudo: { type: Sequelize.STRING },
             email: { type: Sequelize.STRING },
-            password: { type: Sequelize.STRING }
+            password: { type: Sequelize.STRING },
+            room: { type: Sequelize.STRING },
+        },{
+            freezeTableName: true,
+            timestamps: false,
+        });
+        this.rooms = this.sequelize.define('rooms', {
+            id: { type: Sequelize.INTEGER, primaryKey: true},
+            name: { type: Sequelize.STRING },
+            topic: { type: Sequelize.STRING }
         },{
             freezeTableName: true,
             timestamps: false,
@@ -59,4 +68,50 @@ export default class Database {
             });
         });
     }
+    async getOneRoom(name) {
+        return new Promise((resolve, reject) => {
+            this.rooms.findOne({
+                where: {name: name},
+            }).then(room => {
+                return resolve(room);
+            }).catch(err => {
+                return reject(err);
+            })
+        });
+    }    
+    async getRooms() {
+        return new Promise((resolve, reject) => {
+            this.rooms.findAll()
+            .then(rooms => {
+                return resolve(rooms);
+            }).catch(err => {
+                return reject(err);
+            })
+        });
+    }
+    async makeNewRoom(room) {
+        return new Promise((resolve, reject) => {
+            this.rooms.create({
+                name: room.name,
+                topic: room.topic
+            }).then(() => {
+                return resolve(true);
+            }).catch(() => {
+                return reject(false);
+            });
+        })
+    }
+    async getUserRooms(user) {
+        return new Promise((resolve, reject) => {
+            this.user.findOne({
+                where: {id: user}
+            }).then(rooms => {
+                rooms = rooms.dataValues.room.split(',');
+                return resolve(rooms);
+            }).catch(err => {
+                return reject(err);
+            })
+        })
+    }
+
 }
