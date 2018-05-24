@@ -8,6 +8,18 @@ export default class RouteRoom extends Route {
         super({ ...params});
     }
 
+    isInsideRoom(rooms, room_id) {
+        let res = false;
+        rooms.forEach(room => {
+            if (room == room_id)
+            {
+                res = true;
+                return (true);
+            }
+        });
+        return (res);
+    }
+
     // http://localhost:3000/rooms/
     @Route.Get({ path: '/rooms'})
     async room_g(ctx) {
@@ -39,11 +51,30 @@ export default class RouteRoom extends Route {
     }
 
     // http://localhost:3000/rooms/:id/join
-    @Route.Post({ path: '/rooms/:id/join'})
-    join(ctx) {
+    @Route.Post({
+        path: '/rooms/:id/join',
+        params: {
+            user_id: true
+        }
+    })
+    async join(ctx) {
+        let list = [];
+        const body = this.body(ctx);
+        let rooms = await this.db.getUserRooms(body.user_id);
+        rooms.push(parseInt(ctx.params.id));
+        const res = await this.db.joinUserRoom(body.user_id, rooms);
+        if (res)
+        {
+            const users = await this.db.getAllUsers();
+            users.forEach(user => {
+                const rooms = JSON.parse(user.room);
+                if (this.isInsideRoom(rooms, ctx.params.id))
+                    list.push(user);
+            });
+        }
+        console.log(list);
         this.sendOk(ctx, {
-            msg: `Join Room ${ctx.params.id}`,
-            id: ctx.params.id
-        });
+            name: (await this.db.getOneRoom(ctx.params.id)).name
+        }, list);
     }
 }

@@ -68,10 +68,10 @@ export default class Database {
             });
         });
     }
-    async getOneRoom(name) {
+    async getOneRoom(id) {
         return new Promise((resolve, reject) => {
             this.rooms.findOne({
-                where: {name: name},
+                where: {id: id},
             }).then(room => {
                 return resolve(room);
             }).catch(err => {
@@ -106,12 +106,34 @@ export default class Database {
             this.user.findOne({
                 where: {id: user}
             }).then(rooms => {
-                rooms = rooms.dataValues.room.split(',');
+                rooms = JSON.parse(rooms.dataValues.room);
                 return resolve(rooms);
             }).catch(err => {
                 return reject(err);
-            })
+            });
         })
     }
-
+    async joinUserRoom(user_id, rooms) {
+        return new Promise((resolve, reject) => {
+            this.user.update({
+                room: JSON.stringify(rooms)
+            },{
+                where: {id: user_id}
+            }).then(() => {
+                return resolve(true);
+            }).catch(() => {
+                return reject(false);
+            });
+        })
+    }
+    async getAllUsers() {
+        return new Promise((resolve, reject) => {
+            this.user.findAll()
+            .then((users) => {
+                return resolve(users);
+            }).catch(err => {
+                return reject(err);
+            });
+        });
+    }
 }
