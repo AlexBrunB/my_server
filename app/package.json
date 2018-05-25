@@ -19,7 +19,11 @@
     "lint": "eslint src config test"
   },
   "dependencies": {
+    "koa": "^2.5.1",
+    "koa-route": "^3.2.0",
+    "koa-router": "^7.4.0",
     "koa-smart": "^1.2.0",
+    "koa-websocket": "^5.0.1",
     "mysql2": "^1.5.3",
     "request": "^2.83.0",
     "request-promise": "^4.1.1",

@@ -1,5 +1,8 @@
 import { join } from 'path';
 import { App as AppBase } from 'koa-smart';
+import Koa from 'koa';
+import websockify from 'koa-websocket';
+import WsRoute from 'koa-route';
 import {
   i18n,
   bodyParser,
@@ -13,6 +16,7 @@ import {
   RateLimitStores,
 } from 'koa-smart/middlewares';
 import Database from './Database';
+import Ws from './routes/WsRoute';
 
 // Set Default Option
 RateLimit.defaultOptions({
@@ -35,6 +39,7 @@ export default class App extends AppBase { // the starting class must extend app
 
   async start() {
 
+    const kws = websockify(new Koa());
     await this.routeParam.db.connect();
     super.addMiddlewares([ // we add the relevant middlewares to our API
       cors({ credentials: true }), // add cors headers to the requests
@@ -53,6 +58,15 @@ export default class App extends AppBase { // the starting class must extend app
     ]);
 
     super.mountFolder(join(__dirname, 'routes'), '/'); // adds a folder to scan for route files
+
+    kws.ws.use(WsRoute.all('/socket/websocket', (ctx) => {
+      ctx.websocket.send('Hello world');
+      ctx.websocket.on('message', (message) => {
+        console.log(message);
+      });
+    }))
+    kws.listen(4000);
+
     return super.start();
   }
 }
