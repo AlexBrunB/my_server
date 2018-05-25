@@ -1,5 +1,6 @@
 import Route from './Route';
 import Auth from '../Auth';
+import sha1 from 'sha1';
 
 @Route.Route({
     routeBase: '',
@@ -28,7 +29,8 @@ export default class RoutSignIn extends Route {
                 msg: "SignIn",
                 id: users.id,
                 email: users.email,
-                password : users.password
+                password : users.password,
+                bearer: sha1(`${users.password} + ${users.email} + ${Date.now()}`)
             });
         }
         else
