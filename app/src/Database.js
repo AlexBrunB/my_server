@@ -58,10 +58,12 @@ export default class Database {
             this.user.create({
                 pseudo: user.pseudo,
                 email: user.email,
-                password: user.password
+                password: user.password,
+		room: '[]'
             }).then(() => {
                 return resolve(true);
-            }).catch(() => {
+            }).catch(err => {
+		console.log(err);
                 return reject(false);
             });
         });
