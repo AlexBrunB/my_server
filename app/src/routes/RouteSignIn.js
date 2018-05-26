@@ -21,22 +21,31 @@ export default class RoutSignIn extends Route {
     async signin(ctx) {
         const body = this.body(ctx);
         const users = await this.db.getUser(body.email);
-        const auth = new Auth(body, users.dataValues);
-        if (auth.checkAuth() == true)
-        {
-            this.sendOk(ctx, {
-                msg: "SignIn",
-                id: users.id,
-                email: users.email,
-                password : users.password,
-                bearer: sha1(`${users.password} + ${users.email} + ${Date.now()}`)
-            });
-        }
-        else
+        if (users == null)
         {
             this.sendUnauthorized(ctx, {
                 access: "unauthorized"
             });
+        }
+        else
+        {
+            const auth = new Auth(body, users.dataValues);
+            if (auth.checkAuth() == true)
+            {
+                this.sendOk(ctx, {
+                    msg: "SignIn",
+                    id: users.id,
+                    email: users.email,
+                    password : users.password,
+                    bearer: sha1(`${users.password} + ${users.email} + ${Date.now()}`)
+                });
+            }
+            else
+            {
+                this.sendUnauthorized(ctx, {
+                    access: "unauthorized"
+                });
+            }
         }
     }
 }
