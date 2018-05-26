@@ -106,6 +106,8 @@ export default class Database {
             this.user.findOne({
                 where: {id: user}
             }).then(rooms => {
+                if (rooms == null)
+                    return reject(rooms);
                 rooms = JSON.parse(rooms.dataValues.room);
                 return resolve(rooms);
             }).catch(err => {
