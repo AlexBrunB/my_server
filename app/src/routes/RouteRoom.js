@@ -72,7 +72,6 @@ export default class RouteRoom extends Route {
                     list.push(user);
             });
         }
-        console.log(list);
         this.sendOk(ctx, {
             name: (await this.db.getOneRoom(ctx.params.id)).name,
             id: ctx.params.id

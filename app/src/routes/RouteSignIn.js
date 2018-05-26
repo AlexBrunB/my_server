@@ -24,7 +24,6 @@ export default class RoutSignIn extends Route {
         const auth = new Auth(body, users.dataValues);
         if (auth.checkAuth() == true)
         {
-            console.log("Good Authentication");
             this.sendOk(ctx, {
                 msg: "SignIn",
                 id: users.id,
@@ -35,7 +34,6 @@ export default class RoutSignIn extends Route {
         }
         else
         {
-            console.log("Bad Authentication");
             this.sendUnauthorized(ctx, {
                 access: "unauthorized"
             });
